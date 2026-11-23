@@ -14,11 +14,11 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "io.github.jqssun.displayextend"
+        applicationId = "com.strokedot.displaybridge"
         minSdk = 26
         targetSdk = 37
-        versionCode = 27
-        versionName = "0.0.27"
+        versionCode = 28
+        versionName = "0.1.0-dev"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
