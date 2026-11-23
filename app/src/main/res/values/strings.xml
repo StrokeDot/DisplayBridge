@@ -231,6 +231,7 @@
     <string name="update_installed_version">Installed version: %1$s</string>
     <string name="update_available">Update available: %1$s</string>
     <string name="update_up_to_date">Up to date ✓</string>
+    <string name="update_no_releases">No stable updates have been published yet.</string>
     <string name="update_check_failed">Could not check for updates: %1$s</string>
     <string name="update_downloading">Downloading and verifying update…</string>
     <string name="update_download_install">Download &amp; install</string>
