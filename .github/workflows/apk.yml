@@ -1,48 +1,69 @@
-name: Generate APK
-
-env:
-  main_project_module: app
+name: Publish signed DisplayBridge APK
 
 on:
   push:
-    branches:
-      - "release/**"
     tags:
       - "v*.*.*"
-  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-
-      - name: Set TAG
-        run: |
-          echo "version=$(sed -n 's/.*versionName = "\(.*\)".*/\1/p' ${{ env.main_project_module }}/build.gradle)" >> $GITHUB_ENV
-
-      - name: Use JDK
-        uses: actions/setup-java@v6
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
         with:
-          distribution: "zulu"
-          java-version: "21"
-          cache: "gradle"
-
-      - name: Build
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+      - name: Ensure Git tag and version match
+        shell: bash
         run: |
-          export SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
-          echo ${{ secrets.STORE }} | base64 -d > upload.jks
-          echo ${{ secrets.LOCAL }} | base64 -d > local.properties
-          chmod +x ./gradlew;
-          ./gradlew assembleRelease bundleRelease --stacktrace
-          rm upload.jks local.properties
-
-      - name: Publish (GitHub)
-        uses: softprops/action-gh-release@v3
+          set -euo pipefail
+          actual=$(sed -n 's/.*versionName = "\(.*\)".*/\1/p' app/build.gradle)
+          expected="\${GITHUB_REF_NAME#v}"
+          if [ "$actual" != "$expected" ]; then
+            echo "Refusing release: tag v$expected does not match versionName $actual"
+            exit 1
+          fi
+      - name: Restore release signing key
+        shell: bash
+        env:
+          KEYSTORE_B64: \${{ secrets.DISPLAYBRIDGE_KEYSTORE_B64 }}
+        run: |
+          set -euo pipefail
+          if [ -z "$KEYSTORE_B64" ]; then
+            echo "Missing DISPLAYBRIDGE_KEYSTORE_B64 secret; refusing unsigned release"
+            exit 1
+          fi
+          printf '%s' "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/displaybridge-release.jks"
+          echo "DISPLAYBRIDGE_KEYSTORE_FILE=$RUNNER_TEMP/displaybridge-release.jks" >> "$GITHUB_ENV"
+      - name: Build signed release APK
+        shell: bash
+        env:
+          DISPLAYBRIDGE_STORE_PASSWORD: \${{ secrets.DISPLAYBRIDGE_STORE_PASSWORD }}
+          DISPLAYBRIDGE_KEY_ALIAS: \${{ secrets.DISPLAYBRIDGE_KEY_ALIAS }}
+          DISPLAYBRIDGE_KEY_PASSWORD: \${{ secrets.DISPLAYBRIDGE_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [ -z "$DISPLAYBRIDGE_STORE_PASSWORD" ] || [ -z "$DISPLAYBRIDGE_KEY_ALIAS" ] || [ -z "$DISPLAYBRIDGE_KEY_PASSWORD" ]; then
+            echo "Release signing secrets are incomplete"
+            exit 1
+          fi
+          chmod +x ./gradlew
+          ./gradlew --no-daemon :app:assembleRelease
+          mkdir -p release-assets
+          cp app/build/outputs/apk/release/app-release.apk release-assets/DisplayBridge.apk
+          ( cd release-assets && sha256sum DisplayBridge.apk > DisplayBridge.apk.sha256 )
+      - name: Publish APK to GitHub Releases
+        uses: softprops/action-gh-release@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          name: v${{ env.version }}
-          tag_name: v${{ env.version }}
+          name: DisplayBridge \${{ github.ref_name }}
+          generate_release_notes: true
+          prerelease: false
+          make_latest: true
           files: |
-            ${{ env.main_project_module }}/build/outputs/apk/release/app-release.apk
-            ${{ env.main_project_module }}/build/outputs/bundle/release/app-release.aab
+            release-assets/DisplayBridge.apk
+            release-assets/DisplayBridge.apk.sha256
