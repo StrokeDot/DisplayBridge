@@ -23,7 +23,7 @@ jobs:
         run: |
           set -euo pipefail
           actual=$(sed -n 's/.*versionName = "\(.*\)".*/\1/p' app/build.gradle)
-          expected="\${GITHUB_REF_NAME#v}"
+          expected="${GITHUB_REF_NAME#v}"
           if [ "$actual" != "$expected" ]; then
             echo "Refusing release: tag v$expected does not match versionName $actual"
             exit 1
@@ -31,7 +31,7 @@ jobs:
       - name: Restore release signing key
         shell: bash
         env:
-          KEYSTORE_B64: \${{ secrets.DISPLAYBRIDGE_KEYSTORE_B64 }}
+          KEYSTORE_B64: ${{ secrets.DISPLAYBRIDGE_KEYSTORE_B64 }}
         run: |
           set -euo pipefail
           if [ -z "$KEYSTORE_B64" ]; then
@@ -43,9 +43,9 @@ jobs:
       - name: Build signed release APK
         shell: bash
         env:
-          DISPLAYBRIDGE_STORE_PASSWORD: \${{ secrets.DISPLAYBRIDGE_STORE_PASSWORD }}
-          DISPLAYBRIDGE_KEY_ALIAS: \${{ secrets.DISPLAYBRIDGE_KEY_ALIAS }}
-          DISPLAYBRIDGE_KEY_PASSWORD: \${{ secrets.DISPLAYBRIDGE_KEY_PASSWORD }}
+          DISPLAYBRIDGE_STORE_PASSWORD: ${{ secrets.DISPLAYBRIDGE_STORE_PASSWORD }}
+          DISPLAYBRIDGE_KEY_ALIAS: ${{ secrets.DISPLAYBRIDGE_KEY_ALIAS }}
+          DISPLAYBRIDGE_KEY_PASSWORD: ${{ secrets.DISPLAYBRIDGE_KEY_PASSWORD }}
         run: |
           set -euo pipefail
           if [ -z "$DISPLAYBRIDGE_STORE_PASSWORD" ] || [ -z "$DISPLAYBRIDGE_KEY_ALIAS" ] || [ -z "$DISPLAYBRIDGE_KEY_PASSWORD" ]; then
@@ -60,7 +60,7 @@ jobs:
       - name: Publish APK to GitHub Releases
         uses: softprops/action-gh-release@v2
         with:
-          name: DisplayBridge \${{ github.ref_name }}
+          name: DisplayBridge ${{ github.ref_name }}
           generate_release_notes: true
           prerelease: false
           make_latest: true
