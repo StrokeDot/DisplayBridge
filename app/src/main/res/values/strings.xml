@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Extend</string>
+    <string name="app_name">DisplayBridge</string>
     <string name="accessibility_service_description">Accessibility service for simulating touch events on secondary screens</string>
     <string name="back_button">Back</string>
     <string name="home_button">Home</string>
@@ -27,6 +27,16 @@
     <string name="clear">Clear</string>
     <string name="input_binding">Manually Bind All Input Devices to Display</string>
 
+    <!-- DisplayBridge simple input switching -->
+    <string name="quick_controls_title">Mouse &amp; Keyboard</string>
+    <string name="quick_controls_description">Choose where your mouse and keyboard work. They control one screen at a time.</string>
+    <string name="quick_controls_tablet">Control Tablet</string>
+    <string name="quick_controls_monitor">Control Monitor</string>
+    <string name="quick_controls_need_access">Wireless control access is not ready. Start and authorize the service first.</string>
+    <string name="quick_controls_no_monitor">Connect a monitor first.</string>
+    <string name="quick_controls_tablet_requested">Switching mouse and keyboard to tablet</string>
+    <string name="quick_controls_monitor_requested">Switching mouse and keyboard to monitor</string>
+
     <!-- Home -->
     <string name="shizuku_permission_status">Shizuku</string>
     <string name="accessibility_permission_status">Accessibility</string>
@@ -43,7 +53,7 @@
 
     <!-- Accessibility disclosure -->
     <string name="accessibility_consent_title">Enable accessibility access</string>
-    <string name="accessibility_consent_message">Extend uses the Accessibility Service to operate your external displays: it simulates navigation actions for the on-screen touchpad and floating button, draws the on-screen cursor, and reads window details to direct your input to the focused window on the correct display. This information is used only on your device and is never collected, stored, or shared. Would you like to enable Accessibility Service?</string>
+    <string name="accessibility_consent_message">DisplayBridge uses the Accessibility Service to operate your external displays: it simulates navigation actions for the on-screen touchpad and floating button, draws the on-screen cursor, and reads window details to direct your input to the focused window on the correct display. This information is used only on your device and is never collected, stored, or shared. Would you like to enable Accessibility Service?</string>
     <string name="accessibility_consent_agree">Enable</string>
     <string name="accessibility_consent_decline">Not now</string>
     <string name="shizuku_required">Shizuku permission is required</string>
