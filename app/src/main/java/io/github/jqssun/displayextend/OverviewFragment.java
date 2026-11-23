@@ -12,12 +12,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.transition.MaterialSharedAxis;
 import io.github.jqssun.displayextend.job.AcquireShizuku;
+import io.github.jqssun.displayextend.job.BindAllExternalInputToDisplay;
 import io.github.jqssun.displayextend.shizuku.ShizukuUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,8 @@ public class OverviewFragment extends Fragment {
   private TextView accessibilityStatus;
   private MaterialButton accessibilityPermissionBtn;
   private TextView inputBindingStatus;
+  private MaterialButton quickControlTabletBtn;
+  private MaterialButton quickControlMonitorBtn;
   private LinearLayout displaysContainer;
   private TextView permissionsStatusTitle;
   private TextView permissionsStatusDetail;
@@ -82,6 +86,10 @@ public class OverviewFragment extends Fragment {
           _updatePermissionsCard();
         });
     inputBindingStatus = view.findViewById(R.id.input_binding_status);
+    quickControlTabletBtn = view.findViewById(R.id.quick_control_tablet_button);
+    quickControlMonitorBtn = view.findViewById(R.id.quick_control_monitor_button);
+    quickControlTabletBtn.setOnClickListener(v -> _switchInputToDisplay(false));
+    quickControlMonitorBtn.setOnClickListener(v -> _switchInputToDisplay(true));
     displaysContainer = view.findViewById(R.id.displays_container);
     permissionsStatusTitle = view.findViewById(R.id.permissions_status_title);
     permissionsStatusDetail = view.findViewById(R.id.permissions_status_detail);
@@ -125,6 +133,7 @@ public class OverviewFragment extends Fragment {
     State.refreshUI();
     _refreshDisplayList();
     _updateInputBindingStatus();
+    _updateQuickControlButtons();
   }
 
   @Override
@@ -149,6 +158,7 @@ public class OverviewFragment extends Fragment {
 
     _refreshDisplayList();
     _updateInputBindingStatus();
+    _updateQuickControlButtons();
   }
 
   private void _updatePermissionsCard() {
@@ -198,6 +208,62 @@ public class OverviewFragment extends Fragment {
     for (Display display : displayList) {
       displaysContainer.addView(_createDisplayRow(inflater, displaysContainer, display));
     }
+    _updateQuickControlButtons();
+  }
+
+  /**
+   * First-test quick switch: route all external mice/keyboards to one display.
+   * This deliberately does not pretend to provide cross-display cursor travel.
+   */
+  private void _switchInputToDisplay(boolean useMonitor) {
+    if (!ShizukuUtils.hasShizukuStarted() || !ShizukuUtils.hasPermission()) {
+      Toast.makeText(requireContext(), R.string.quick_controls_need_access, Toast.LENGTH_LONG).show();
+      return;
+    }
+    DisplayManager dm =
+        (DisplayManager) requireContext().getSystemService(Context.DISPLAY_SERVICE);
+    Display target = useMonitor ? _firstExternalDisplay(dm) : dm.getDisplay(Display.DEFAULT_DISPLAY);
+    if (target == null) {
+      Toast.makeText(requireContext(), R.string.quick_controls_no_monitor, Toast.LENGTH_SHORT).show();
+      _updateQuickControlButtons();
+      return;
+    }
+
+    // Prevent launching an app from silently reassigning the devices afterwards.
+    Pref.setAutoBindInput(false);
+    _updateInputBindingStatus();
+    State.startNewJob(new BindAllExternalInputToDisplay(target.getDisplayId()));
+    Toast.makeText(
+            requireContext(),
+            useMonitor
+                ? R.string.quick_controls_monitor_requested
+                : R.string.quick_controls_tablet_requested,
+            Toast.LENGTH_SHORT)
+        .show();
+  }
+
+  private Display _firstExternalDisplay(DisplayManager dm) {
+    if (dm == null) return null;
+    for (Display d : dm.getDisplays()) {
+      int id = d.getDisplayId();
+      if (id != Display.DEFAULT_DISPLAY
+          && id != State.managedVirtualDisplayHostDisplayId
+          && id != State.mirrorDisplayId) {
+        return d;
+      }
+    }
+    return null;
+  }
+
+  private void _updateQuickControlButtons() {
+    if (quickControlTabletBtn == null || quickControlMonitorBtn == null || getContext() == null) {
+      return;
+    }
+    boolean ready = ShizukuUtils.hasShizukuStarted() && ShizukuUtils.hasPermission();
+    quickControlTabletBtn.setEnabled(ready);
+    DisplayManager dm =
+        (DisplayManager) requireContext().getSystemService(Context.DISPLAY_SERVICE);
+    quickControlMonitorBtn.setEnabled(ready && _firstExternalDisplay(dm) != null);
   }
 
   private void _updateInputBindingStatus() {

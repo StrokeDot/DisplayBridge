@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Extend</string>
+    <string name="app_name">DisplayBridge</string>
     <string name="accessibility_service_description">Accessibility service for simulating touch events on secondary screens</string>
     <string name="back_button">Back</string>
     <string name="home_button">Home</string>
@@ -27,6 +27,16 @@
     <string name="clear">Clear</string>
     <string name="input_binding">Manually Bind All Input Devices to Display</string>
 
+    <!-- DisplayBridge simple input switching -->
+    <string name="quick_controls_title">Mouse &amp; Keyboard</string>
+    <string name="quick_controls_description">Choose where your mouse and keyboard work. They control one screen at a time.</string>
+    <string name="quick_controls_tablet">Control Tablet</string>
+    <string name="quick_controls_monitor">Control Monitor</string>
+    <string name="quick_controls_need_access">Wireless control access is not ready. Start and authorize the service first.</string>
+    <string name="quick_controls_no_monitor">Connect a monitor first.</string>
+    <string name="quick_controls_tablet_requested">Switching mouse and keyboard to tablet</string>
+    <string name="quick_controls_monitor_requested">Switching mouse and keyboard to monitor</string>
+
     <!-- Home -->
     <string name="shizuku_permission_status">Shizuku</string>
     <string name="accessibility_permission_status">Accessibility</string>
@@ -43,7 +53,7 @@
 
     <!-- Accessibility disclosure -->
     <string name="accessibility_consent_title">Enable accessibility access</string>
-    <string name="accessibility_consent_message">Extend uses the Accessibility Service to operate your external displays: it simulates navigation actions for the on-screen touchpad and floating button, draws the on-screen cursor, and reads window details to direct your input to the focused window on the correct display. This information is used only on your device and is never collected, stored, or shared. Would you like to enable Accessibility Service?</string>
+    <string name="accessibility_consent_message">DisplayBridge uses the Accessibility Service to operate your external displays: it simulates navigation actions for the on-screen touchpad and floating button, draws the on-screen cursor, and reads window details to direct your input to the focused window on the correct display. This information is used only on your device and is never collected, stored, or shared. Would you like to enable Accessibility Service?</string>
     <string name="accessibility_consent_agree">Enable</string>
     <string name="accessibility_consent_decline">Not now</string>
     <string name="shizuku_required">Shizuku permission is required</string>
@@ -212,10 +222,31 @@
     <string name="first_launch_hint">Opened on phone first to grant permissions. Tap again to cast.</string>
     <string name="input_routing_limitation">Due to Android version limitation, tap \'Turn display off\' to use the touchscreen</string>
 
+    <!-- Built-in updater: opt-in, verified, from GitHub Releases -->
+    <string name="update_title">App updates</string>
+    <string name="update_back">Back</string>
+    <string name="update_check">Check for updates</string>
+    <string name="update_check_again">Check again</string>
+    <string name="update_checking">Checking for updates…</string>
+    <string name="update_installed_version">Installed version: %1$s</string>
+    <string name="update_available">Update available: %1$s</string>
+    <string name="update_up_to_date">Up to date ✓</string>
+    <string name="update_no_releases">No stable updates have been published yet.</string>
+    <string name="update_check_failed">Could not check for updates: %1$s</string>
+    <string name="update_downloading">Downloading and verifying update…</string>
+    <string name="update_download_install">Download &amp; install</string>
+    <string name="update_ready">Update verified. Ready to install.</string>
+    <string name="update_install">Install update</string>
+    <string name="update_install_prompt">Continue in Android’s installer to finish the update.</string>
+    <string name="update_allow_install">Allow DisplayBridge to install apps, then return and tap Install update again.</string>
+    <string name="update_permission_unavailable">Could not open Android’s installer. Check app installation permissions.</string>
+    <string name="update_download_failed">Could not install this update: %1$s</string>
+    <string name="update_privacy">Updates come only from the official StrokeDot/DisplayBridge GitHub Releases. Files are checked with SHA-256 and must match the installed app’s signing key. Android always asks you to confirm installation.</string>
+
     <!-- About -->
     <string name="version_format">Version: %1$s (Android %2$s)</string>
     <string name="version_unknown">Version: Unknown</string>
-    <string name="website_label">Source: github.com/jqssun/android-display-extend</string>
+    <string name="website_label">DisplayBridge · GPLv3 (based on Extend)</string>
     <string name="export_log_needs_shizuku">Exporting log files requires Shizuku permission</string>
 
     <!-- Fetch log -->

@@ -9,16 +9,23 @@ if (localPropsFile.exists()) {
     localProps.load(localPropsFile.newDataInputStream())
 }
 
+def ciSigningStore = System.getenv('DISPLAYBRIDGE_KEYSTORE_FILE')
+def ciSigningPassword = System.getenv('DISPLAYBRIDGE_STORE_PASSWORD')
+def ciSigningAlias = System.getenv('DISPLAYBRIDGE_KEY_ALIAS')
+def ciSigningKeyPassword = System.getenv('DISPLAYBRIDGE_KEY_PASSWORD')
+def useCiSigning = ciSigningStore && ciSigningPassword && ciSigningAlias && ciSigningKeyPassword
+def useLocalSigning = !useCiSigning && localProps.containsKey('storeFile')
+
 android {
     namespace = 'io.github.jqssun.displayextend'
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "io.github.jqssun.displayextend"
+        applicationId = "com.strokedot.displaybridge"
         minSdk = 26
         targetSdk = 37
-        versionCode = 27
-        versionName = "0.0.27"
+        versionCode = 28
+        versionName = "0.1.0-dev"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -28,13 +35,20 @@ android {
         includeInBundle = false
     }
 
-    if (localProps.containsKey("storeFile")) {
+    if (useCiSigning || useLocalSigning) {
         signingConfigs {
             release {
-                storeFile = file(localProps.getProperty('storeFile'))
-                storePassword = localProps.getProperty('storePassword')
-                keyAlias = localProps.getProperty('keyAlias')
-                keyPassword = localProps.getProperty('keyPassword')
+                if (useCiSigning) {
+                    storeFile = file(ciSigningStore)
+                    storePassword = ciSigningPassword
+                    keyAlias = ciSigningAlias
+                    keyPassword = ciSigningKeyPassword
+                } else {
+                    storeFile = file(localProps.getProperty('storeFile'))
+                    storePassword = localProps.getProperty('storePassword')
+                    keyAlias = localProps.getProperty('keyAlias')
+                    keyPassword = localProps.getProperty('keyPassword')
+                }
             }
         }
     }
@@ -43,7 +57,7 @@ android {
         release {
             minifyEnabled = true
             shrinkResources = true
-            if (localProps.containsKey("storeFile")) {
+            if (useCiSigning || useLocalSigning) {
                 signingConfig = signingConfigs.release
             }
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'

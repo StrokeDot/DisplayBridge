@@ -144,6 +144,8 @@ public class SettingsFragment extends Fragment {
     } catch (Exception e) {
       versionText.setText(R.string.version_unknown);
     }
+    view.findViewById(R.id.check_for_updates_button)
+        .setOnClickListener(v -> startActivity(new Intent(requireContext(), UpdateActivity.class)));
     view.findViewById(R.id.website_link)
         .setOnClickListener(
             v ->
@@ -151,7 +153,7 @@ public class SettingsFragment extends Fragment {
                     new android.content.Intent(
                         android.content.Intent.ACTION_VIEW,
                         android.net.Uri.parse(
-                            "https://github.com/jqssun/android-display-extend"))));
+                            "https://github.com/StrokeDot/DisplayBridge"))));
     view.findViewById(R.id.shizuku_btn)
         .setOnClickListener(
             v ->
