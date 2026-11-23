@@ -103,12 +103,15 @@ public class UpdateActivity extends AppCompatActivity {
     worker.execute(() -> {
       try {
         ReleaseInfo release = fetchLatestRelease();
-        boolean newer = isNewer(release.version, BuildConfig.VERSION_NAME);
+        boolean newer = release != null
+            && isNewer(release.version, BuildConfig.VERSION_NAME);
         runOnUiThread(() -> {
           if (isFinishing() || isDestroyed()) return;
           availableRelease = newer ? release : null;
           setBusy(false);
-          if (newer) {
+          if (release == null) {
+            statusText.setText(R.string.update_no_releases);
+          } else if (newer) {
             statusText.setText(getString(R.string.update_available, release.version));
             updateButton.setText(R.string.update_download_install);
           } else {
@@ -131,6 +134,9 @@ public class UpdateActivity extends AppCompatActivity {
       connection = openHttps(RELEASE_API);
       connection.setRequestProperty("Accept", "application/vnd.github+json");
       connection.setRequestProperty("User-Agent", "DisplayBridge-Updater");
+      if (connection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+        return null; // Repository exists but has no published stable release yet.
+      }
       if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
         throw new Exception("GitHub returned HTTP " + connection.getResponseCode());
       }
