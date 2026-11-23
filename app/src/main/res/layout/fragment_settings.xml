@@ -520,6 +520,14 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?attr/textAppearanceBodyLarge" />
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/check_for_updates_button"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/update_check" />
+
                 <TextView
                     android:id="@+id/website_link"
                     android:layout_width="match_parent"
