@@ -222,10 +222,30 @@
     <string name="first_launch_hint">Opened on phone first to grant permissions. Tap again to cast.</string>
     <string name="input_routing_limitation">Due to Android version limitation, tap \'Turn display off\' to use the touchscreen</string>
 
+    <!-- Built-in updater: opt-in, verified, from GitHub Releases -->
+    <string name="update_title">App updates</string>
+    <string name="update_back">Back</string>
+    <string name="update_check">Check for updates</string>
+    <string name="update_check_again">Check again</string>
+    <string name="update_checking">Checking for updates…</string>
+    <string name="update_installed_version">Installed version: %1$s</string>
+    <string name="update_available">Update available: %1$s</string>
+    <string name="update_up_to_date">Up to date ✓</string>
+    <string name="update_check_failed">Could not check for updates: %1$s</string>
+    <string name="update_downloading">Downloading and verifying update…</string>
+    <string name="update_download_install">Download &amp; install</string>
+    <string name="update_ready">Update verified. Ready to install.</string>
+    <string name="update_install">Install update</string>
+    <string name="update_install_prompt">Continue in Android’s installer to finish the update.</string>
+    <string name="update_allow_install">Allow DisplayBridge to install apps, then return and tap Install update again.</string>
+    <string name="update_permission_unavailable">Could not open Android’s installer. Check app installation permissions.</string>
+    <string name="update_download_failed">Could not install this update: %1$s</string>
+    <string name="update_privacy">Updates come only from the official StrokeDot/DisplayBridge GitHub Releases. Files are checked with SHA-256 and must match the installed app’s signing key. Android always asks you to confirm installation.</string>
+
     <!-- About -->
     <string name="version_format">Version: %1$s (Android %2$s)</string>
     <string name="version_unknown">Version: Unknown</string>
-    <string name="website_label">Source: github.com/jqssun/android-display-extend</string>
+    <string name="website_label">DisplayBridge · GPLv3 (based on Extend)</string>
     <string name="export_log_needs_shizuku">Exporting log files requires Shizuku permission</string>
 
     <!-- Fetch log -->
